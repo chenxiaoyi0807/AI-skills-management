@@ -1,0 +1,242 @@
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-base);
+    /* 内容区用 bg-base，与弹窗 bg-overlay 形成层级 */
+}
+
+.header {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    flex-shrink: 0;
+}
+
+.headerIcon {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.headerFileName {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.actionBtn:hover {
+    color: var(--bg-card);
+    background: var(--text-primary);
+}
+
+.saveBtn {
+    color: #000000;
+    background: var(--color-primary);
+}
+
+.saveBtn:hover {
+    background: var(--color-primary-hover);
+    color: #000000;
+}
+
+.saveBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 编辑器 */
+.editor {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: var(--space-xl);
+    font-family: var(--font-mono);
+    font-size: var(--text-code);
+    line-height: 1.7;
+    color: var(--text-primary);
+    background: var(--bg-base);
+    box-sizing: border-box;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-xl);
+    background: var(--bg-base);
+}
+
+/* Markdown 内容样式 */
+.markdown {
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: var(--text-body);
+    max-width: 800px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.markdown h1 {
+    font-size: 24px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-default);
+}
+
+.markdown h2 {
+    font-size: 20px;
+}
+
+.markdown h3 {
+    font-size: 16px;
+}
+
+.markdown p {
+    margin-bottom: 12px;
+}
+
+.markdown a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.markdown a:hover {
+    text-decoration: underline;
+}
+
+.markdown ul,
+.markdown ol {
+    margin-bottom: 12px;
+    padding-left: 24px;
+}
+
+.markdown li {
+    margin-bottom: 4px;
+}
+
+.markdown blockquote {
+    border-left: 3px solid var(--color-primary);
+    padding: var(--space-sm) var(--space-md);
+    margin: 12px 0;
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* 行内代码 */
+.markdown code {
+    font-family: var(--font-mono);
+    font-size: var(--text-code);
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 代码块：使用主题背景 */
+.markdown pre {
+    background: var(--bg-card) !important;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin: 12px 0;
+    overflow-x: auto;
+    border: 1px solid var(--border-default);
+}
+
+.markdown pre code {
+    background: none !important;
+    color: var(--text-primary);
+    padding: 0;
+    font-size: var(--text-code);
+    line-height: 1.6;
+}
+
+.markdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+}
+
+.markdown th,
+.markdown td {
+    border: 1px solid var(--border-default);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.markdown th {
+    background: var(--bg-hover);
+    font-weight: 600;
+}
+
+.markdown tr:nth-child(even) {
+    background: rgba(127, 127, 127, 0.04);
+}
+
+.markdown img {
+    max-width: 100%;
+    border-radius: var(--radius-sm);
+}
+
+.markdown hr {
+    border: none;
+    border-top: 1px solid var(--border-default);
+    margin: 24px 0;
+}
+
+/* 空状态 */
+.empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: var(--space-md);
+    color: var(--text-tertiary);
+    font-size: var(--text-body);
+    background: var(--bg-base);
+}
+
+.emptyIcon {
+    opacity: 0.4;
+}

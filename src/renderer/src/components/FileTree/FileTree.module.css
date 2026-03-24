@@ -1,0 +1,86 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.header {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.headerLabel {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.selectAll {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-caption);
+    color: var(--text-secondary);
+}
+
+.treeList {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-sm) 0;
+}
+
+.node {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    height: 32px;
+    padding: 0 var(--space-md);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    font-size: var(--text-body);
+    color: var(--text-primary);
+    user-select: none;
+}
+
+.node:hover {
+    background: var(--bg-hover);
+}
+
+.nodeActive {
+    background: var(--bg-hover);
+    border-left: 3px solid var(--color-primary);
+    padding-left: calc(var(--space-md) - 3px);
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.nodeIcon {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.nodeName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.topCheckbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}

@@ -1,0 +1,134 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.dialog {
+    background: var(--bg-overlay);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    width: min(520px, 90vw);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: scaleIn 0.25s ease-out;
+}
+
+.header {
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.headerIcon {
+    color: var(--color-warning);
+}
+
+.headerTitle {
+    font-size: var(--text-h2);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.body {
+    padding: var(--space-lg);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.message {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.fileList {
+    list-style: none;
+}
+
+.fileItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0;
+    color: var(--text-primary);
+    font-size: var(--text-body);
+}
+
+.fileIcon {
+    color: var(--color-warning);
+}
+
+.footer {
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-body);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.btnSecondary {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+}
+
+.btnSecondary:hover {
+    border-color: var(--border-emphasis);
+}
+
+.btnPrimary {
+    background: var(--color-primary);
+    color: #000;
+}
+
+.btnPrimary:hover {
+    background: var(--color-primary-hover);
+}
+
+.btnDanger {
+    background: var(--color-danger);
+    color: #fff;
+}
+
+.btnDanger:hover {
+    background: #da3633;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

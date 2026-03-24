@@ -1,0 +1,109 @@
+/* ===========================
+ * 设计令牌 (Design Tokens)
+ * 定义全局 CSS 自定义属性
+ * =========================== */
+
+/* ---- 暗色主题（默认） ---- */
+/* ---- 暗色主题（默认） ---- */
+:root,
+[data-theme="dark"] {
+  /* 字体: 粗犷的标题搭配清新的正文 */
+  --font-sans: 'Georgia', 'Times New Roman', serif;
+  --font-display: 'Futura', 'Trebuchet MS', 'Impact', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* 字号 */
+  --text-h1: 32px;
+  --text-h2: 24px;
+  --text-h3: 16px;
+  --text-body: 14px;
+  --text-caption: 12px;
+  --text-code: 13px;
+
+  /* 行高 */
+  --lh-h1: 1.2;
+  --lh-h2: 1.3;
+  --lh-h3: 1.4;
+  --lh-body: 1.6;
+  --lh-caption: 1.5;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 64px;
+
+  /* 圆角 - 极致直角或大圆角，这里采用锐利工业风 */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 999px;
+
+  /* 背景色: 纯黑与深灰，拉开对比度 */
+  --bg-base: #000000;
+  --bg-card: #0A0A0A;
+  --bg-overlay: #111111;
+  --bg-hover: #1A1A1A;
+
+  /* 边框: 高锐度边框 */
+  --border-default: #222222;
+  --border-emphasis: #404040;
+
+  /* 文字: 降低纯白色的刺眼感 */
+  --text-primary: #E2E2E2;
+  --text-secondary: #A0A0A0;
+  --text-tertiary: #606060;
+
+  /* 主色: 电光荧光色系 */
+  --color-primary: #CCFF00;
+  /* 酸性荧光绿 */
+  --color-primary-hover: #E5FF66;
+  --color-success: #00FAA0;
+  --color-warning: #FFBF00;
+  --color-danger: #FF3366;
+
+  /* 标签色 */
+  --tag-purple: #B200FF;
+  --tag-blue: #00A6FF;
+  --tag-cyan: #00E5FF;
+  --tag-orange: #FF5500;
+  --tag-pink: #FF007F;
+
+  /* 阴影: 硬阴影带来机械几何感 */
+  --shadow-card: 4px 4px 0px 0px rgba(204, 255, 0, 0.1);
+  --shadow-card-hover: 6px 6px 0px 0px rgba(204, 255, 0, 0.4);
+  --shadow-modal: 0 0 0 1px #333, 12px 12px 0px 0px rgba(0, 0, 0, 1);
+
+  /* 动效 */
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- 亮色主题 ---- */
+[data-theme="light"] {
+  --bg-base: #F0F0F0;
+  --bg-card: #FFFFFF;
+  --bg-overlay: #FAFAFA;
+  --bg-hover: #E2E2E2;
+  --border-default: #000000;
+  --border-emphasis: #000000;
+  --text-primary: #000000;
+  --text-secondary: #4A4A4A;
+  --text-tertiary: #888888;
+  --color-primary: #CCFF00;
+  --color-primary-hover: #E5FF66;
+  --color-success: #00B368;
+  --color-warning: #D96200;
+  --color-danger: #D90036;
+  --tag-purple: #6600FF;
+  --tag-blue: #0055FF;
+  --tag-cyan: #0099AA;
+  --tag-orange: #CC4400;
+  --tag-pink: #CC0066;
+  --shadow-card: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-card-hover: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-modal: 0 0 0 2px #000, 16px 16px 0px 0px rgba(0, 0, 0, 1);
+}

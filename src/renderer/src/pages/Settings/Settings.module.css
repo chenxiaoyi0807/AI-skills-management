@@ -1,0 +1,128 @@
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.topBar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    border-bottom: 1px solid var(--border-default);
+    background: var(--bg-card);
+    flex-shrink: 0;
+}
+
+.backBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.backBtn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.title {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-xl);
+    max-width: 640px;
+}
+
+.section {
+    margin-bottom: var(--space-xl);
+}
+
+.label {
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-sm);
+}
+
+.pathRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.pathValue {
+    flex: 1;
+    padding: 10px var(--space-md);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    font-size: var(--text-body);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.changeBtn {
+    padding: 10px 16px;
+    background: var(--bg-hover);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    font-size: var(--text-body);
+    color: var(--text-primary);
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.changeBtn:hover {
+    border-color: var(--border-emphasis);
+    background: var(--border-default);
+}
+
+.info {
+    font-size: var(--text-caption);
+    color: var(--text-tertiary);
+    margin-top: var(--space-sm);
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: var(--space-md);
+}
+
+.inputGroup label {
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.inputField {
+    padding: 10px 12px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: var(--text-body);
+    transition: all var(--transition-fast);
+}
+
+.inputField:focus {
+    outline: none;
+    border-color: var(--border-emphasis);
+    background: var(--bg-hover);
+}
