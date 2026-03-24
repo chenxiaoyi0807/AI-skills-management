@@ -4,11 +4,15 @@ interface Props {
     label: string
     color?: 'purple' | 'blue' | 'cyan' | 'orange' | 'pink'
     onRemove?: () => void
+    onDoubleClick?: (e: React.MouseEvent) => void
 }
 
-export default function TagPill({ label, color = 'blue', onRemove }: Props) {
+export default function TagPill({ label, color = 'blue', onRemove, onDoubleClick }: Props) {
     return (
-        <span className={`${styles.pill} ${styles[color]}`}>
+        <span 
+            className={`${styles.pill} ${styles[color]}`}
+            onDoubleClick={onDoubleClick}
+        >
             {label}
             {onRemove && (
                 <button

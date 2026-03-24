@@ -18,6 +18,9 @@ export default function SkillCard({ card, onClick, onDeploy, onTagsChange }: Pro
     const [isAddingTag, setIsAddingTag] = useState(false)
     const [newTag, setNewTag] = useState('')
 
+    const [editingTagIndex, setEditingTagIndex] = useState<number | null>(null)
+    const [editTagValue, setEditTagValue] = useState('')
+
     /** 添加标签 */
     const handleAddTag = () => {
         const tag = newTag.trim()
@@ -39,6 +42,38 @@ export default function SkillCard({ card, onClick, onDeploy, onTagsChange }: Pro
         if (e.key === 'Escape') {
             setNewTag('')
             setIsAddingTag(false)
+        }
+    }
+
+    /** 提交双击修改后的标签 */
+    const handleEditTagCommit = () => {
+        if (editingTagIndex === null) return
+        
+        const newTagValue = editTagValue.trim()
+        const oldTagValue = card.tags[editingTagIndex]
+
+        if (!newTagValue) {
+            handleRemoveTag(oldTagValue)
+        } else if (newTagValue !== oldTagValue) {
+            const newTags = [...card.tags]
+            // 防重处理
+            if (newTags.includes(newTagValue)) {
+                newTags.splice(editingTagIndex, 1) // 如果改成的名字和其他现存标签冲突，则视为删除此标签
+            } else {
+                newTags[editingTagIndex] = newTagValue
+            }
+            onTagsChange(newTags)
+        }
+        
+        setEditingTagIndex(null)
+        setEditTagValue('')
+    }
+
+    const handleEditKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') handleEditTagCommit()
+        if (e.key === 'Escape') {
+            setEditingTagIndex(null)
+            setEditTagValue('')
         }
     }
 
@@ -90,12 +125,31 @@ export default function SkillCard({ card, onClick, onDeploy, onTagsChange }: Pro
             {/* 标签区域 */}
             <div className={styles.tags} onClick={(e) => e.stopPropagation()}>
                 {card.tags.map((tag, i) => (
-                    <TagPill
-                        key={tag}
-                        label={tag}
-                        color={TAG_COLORS[i % TAG_COLORS.length]}
-                        onRemove={() => handleRemoveTag(tag)}
-                    />
+                    editingTagIndex === i ? (
+                        <input
+                            key={`edit-${i}`}
+                            className={styles.tagInput}
+                            value={editTagValue}
+                            onChange={(e) => setEditTagValue(e.target.value)}
+                            onBlur={handleEditTagCommit}
+                            onKeyDown={handleEditKeyDown}
+                            maxLength={20}
+                            autoFocus
+                            placeholder="修改标签"
+                        />
+                    ) : (
+                        <TagPill
+                            key={tag}
+                            label={tag}
+                            color={TAG_COLORS[i % TAG_COLORS.length]}
+                            onRemove={() => handleRemoveTag(tag)}
+                            onDoubleClick={(e) => {
+                                e.stopPropagation()
+                                setEditingTagIndex(i)
+                                setEditTagValue(tag)
+                            }}
+                        />
+                    )
                 ))}
 
                 {isAddingTag ? (
