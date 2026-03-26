@@ -43,6 +43,8 @@ const api = {
     // ---- Git 同步管理 ----
     /** 导入新 Skill */
     importSkill: (repoUrl: string, folderName: string) => ipcRenderer.invoke('sync:clone-skill', repoUrl, folderName),
+    /** 解除绑定 */
+    unbindSkill: (folderName: string) => ipcRenderer.invoke('sync:unbind-skill', folderName),
     /** 更新特定 Skill */
     updateSkill: (folderName: string) => ipcRenderer.invoke('sync:update-skill', folderName),
     /** 更新所有绑定的 Skills */

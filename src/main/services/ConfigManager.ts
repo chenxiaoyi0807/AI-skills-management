@@ -79,6 +79,15 @@ export class ConfigManager {
         const config = await this.loadConfig()
         return config.tags[folderName] || []
     }
+
+    /** 解除指定文件夹与 GitHub 仓库的同步绑定 */
+    async unbindSyncUrl(folderName: string): Promise<void> {
+        const config = await this.loadConfig()
+        if (config.syncUrls && config.syncUrls[folderName]) {
+            delete config.syncUrls[folderName]
+            await this.saveConfig(config)
+        }
+    }
 }
 
 // 单例导出

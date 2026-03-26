@@ -20,6 +20,7 @@ declare global {
             
             // Sync
             importSkill: (repoUrl: string, folderName: string) => Promise<{ success: boolean; message?: string }>
+            unbindSkill: (folderName: string) => Promise<{ success: boolean; message?: string }>
             updateSkill: (folderName: string) => Promise<{ success: boolean; message?: string }>
             updateAllSkills: () => Promise<{ success: boolean; data: { success: string[], failed: {name: string, error: string}[] }; message?: string }>
             checkAutoSync: () => Promise<{ success: boolean; data: boolean; message?: string }>

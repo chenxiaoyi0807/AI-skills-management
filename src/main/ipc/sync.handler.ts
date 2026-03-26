@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import { gitSyncService } from '../services/GitSyncService'
 import { cloudSyncService } from '../services/CloudSyncService'
+import { configManager } from '../services/ConfigManager'
 
 export function registerSyncHandlers() {
     // 导入新的 Skill
@@ -17,6 +18,16 @@ export function registerSyncHandlers() {
     ipcMain.handle('sync:update-skill', async (_, folderName: string) => {
         try {
             await gitSyncService.updateSkill(folderName)
+            return { success: true }
+        } catch (error: any) {
+            return { success: false, message: error.message || String(error) }
+        }
+    })
+
+    // 解除特定 Skill的 Git 绑定
+    ipcMain.handle('sync:unbind-skill', async (_, folderName: string) => {
+        try {
+            await configManager.unbindSyncUrl(folderName)
             return { success: true }
         } catch (error: any) {
             return { success: false, message: error.message || String(error) }

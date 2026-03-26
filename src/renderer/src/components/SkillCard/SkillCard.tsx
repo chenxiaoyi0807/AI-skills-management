@@ -3,6 +3,7 @@ import { Folder, Download, Github } from 'lucide-react'
 import TagPill from '../TagPill/TagPill'
 import styles from './SkillCard.module.css'
 import type { SkillCard as SkillCardType } from '../../../../shared/types'
+import { useSkillsStore } from '../../stores'
 
 interface Props {
     card: SkillCardType
@@ -22,6 +23,17 @@ export default function SkillCard({ card, onClick, onDeploy, onTagsChange, isSel
 
     const [editingTagIndex, setEditingTagIndex] = useState<number | null>(null)
     const [editTagValue, setEditTagValue] = useState('')
+
+    const loadSkills = useSkillsStore(state => state.loadSkills)
+
+    /** 解除绑定 */
+    const handleUnbind = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (window.confirm(`确定要解除该技能 (${card.name}) 与 GitHub 仓库的绑定吗？\n解绑后将不再从此仓库更新代码。`)) {
+            await window.api.unbindSkill(card.name)
+            loadSkills()
+        }
+    }
 
     /** 添加标签 */
     const handleAddTag = () => {
@@ -107,7 +119,11 @@ export default function SkillCard({ card, onClick, onDeploy, onTagsChange, isSel
                     <Folder size={20} className={styles.icon} />
                     <span className={styles.title} title={card.name}>{card.name}</span>
                     {card.syncUrl && (
-                        <span title={`已绑定 GitHub: ${card.syncUrl}`} className={styles.githubIconWrapper}>
+                        <span 
+                            title={`已绑定 GitHub: ${card.syncUrl}\n点击可解除绑定`} 
+                            className={styles.githubIconWrapper}
+                            onClick={handleUnbind}
+                        >
                             <Github 
                                 size={16} 
                                 className={styles.githubIcon} 

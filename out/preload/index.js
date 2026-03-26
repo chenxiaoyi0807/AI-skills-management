@@ -31,6 +31,8 @@ const api = {
   // ---- Git 同步管理 ----
   /** 导入新 Skill */
   importSkill: (repoUrl, folderName) => electron.ipcRenderer.invoke("sync:clone-skill", repoUrl, folderName),
+  /** 解除绑定 */
+  unbindSkill: (folderName) => electron.ipcRenderer.invoke("sync:unbind-skill", folderName),
   /** 更新特定 Skill */
   updateSkill: (folderName) => electron.ipcRenderer.invoke("sync:update-skill", folderName),
   /** 更新所有绑定的 Skills */

@@ -153,6 +153,14 @@ class ConfigManager {
     const config = await this.loadConfig();
     return config.tags[folderName] || [];
   }
+  /** 解除指定文件夹与 GitHub 仓库的同步绑定 */
+  async unbindSyncUrl(folderName) {
+    const config = await this.loadConfig();
+    if (config.syncUrls && config.syncUrls[folderName]) {
+      delete config.syncUrls[folderName];
+      await this.saveConfig(config);
+    }
+  }
 }
 const configManager = new ConfigManager();
 function registerConfigHandlers() {
@@ -875,6 +883,14 @@ function registerSyncHandlers() {
   electron.ipcMain.handle("sync:update-skill", async (_, folderName) => {
     try {
       await gitSyncService.updateSkill(folderName);
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message || String(error) };
+    }
+  });
+  electron.ipcMain.handle("sync:unbind-skill", async (_, folderName) => {
+    try {
+      await configManager.unbindSyncUrl(folderName);
       return { success: true };
     } catch (error) {
       return { success: false, message: error.message || String(error) };
