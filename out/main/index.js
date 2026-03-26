@@ -401,20 +401,24 @@ class DeployEngine {
    */
   async checkConflicts(req) {
     const config = await configManager.loadConfig();
-    const skillPath = path.join(config.rootDir, req.skillName);
-    const deployTargetBase = path.join(req.targetDir, req.skillName);
     const conflicts = [];
-    for (const file of req.files) {
-      const sourcePath = path.join(skillPath, file);
-      const targetPath = path.join(deployTargetBase, file);
-      try {
-        await fs.promises.access(targetPath);
-        conflicts.push({
-          fileName: file,
-          sourcePath,
-          targetPath
-        });
-      } catch {
+    const skillsToDeploy = req.skills && req.skills.length > 0 ? req.skills : [{ skillName: req.skillName, files: req.files }];
+    for (const skill of skillsToDeploy) {
+      const skillPath = path.join(config.rootDir, skill.skillName);
+      const deployTargetBase = path.join(req.targetDir, skill.skillName);
+      for (const file of skill.files) {
+        const sourcePath = path.join(skillPath, file);
+        const targetPath = path.join(deployTargetBase, file);
+        const combinedFileName = req.skills ? `${skill.skillName}/${file}` : file;
+        try {
+          await fs.promises.access(targetPath);
+          conflicts.push({
+            fileName: combinedFileName,
+            sourcePath,
+            targetPath
+          });
+        } catch {
+        }
       }
     }
     return conflicts;
@@ -427,38 +431,44 @@ class DeployEngine {
    */
   async executeDeploy(req, resolutions = {}) {
     const config = await configManager.loadConfig();
-    const skillPath = path.join(config.rootDir, req.skillName);
-    const deployTargetBase = path.join(req.targetDir, req.skillName);
     const results = [];
-    for (const file of req.files) {
-      const sourcePath = path.join(skillPath, file);
-      const targetPath = path.join(deployTargetBase, file);
-      try {
-        let exists = false;
+    const skillsToDeploy = req.skills && req.skills.length > 0 ? req.skills : [{ skillName: req.skillName, files: req.files }];
+    for (const skill of skillsToDeploy) {
+      const skillPath = path.join(config.rootDir, skill.skillName);
+      const deployTargetBase = path.join(req.targetDir, skill.skillName);
+      for (const file of skill.files) {
+        const sourcePath = path.join(skillPath, file);
+        const targetPath = path.join(deployTargetBase, file);
+        const combinedFileName = req.skills ? `${skill.skillName}/${file}` : file;
         try {
-          await fs.promises.access(targetPath);
-          exists = true;
-        } catch {
-        }
-        if (exists) {
-          const resolution = resolutions[file];
-          if (resolution === "skip") {
-            results.push({ fileName: file, status: "skipped", message: "用户选择跳过" });
-            continue;
+          let exists = false;
+          try {
+            await fs.promises.access(targetPath);
+            exists = true;
+          } catch {
           }
+          if (exists) {
+            const resolution = resolutions[combinedFileName];
+            if (resolution === "skip") {
+              results.push({ skillName: skill.skillName, fileName: combinedFileName, status: "skipped", message: "用户选择跳过" });
+              continue;
+            }
+          }
+          await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
+          await fs.promises.copyFile(sourcePath, targetPath);
+          results.push({
+            skillName: skill.skillName,
+            fileName: combinedFileName,
+            status: exists ? "overwritten" : "copied"
+          });
+        } catch (err) {
+          results.push({
+            skillName: skill.skillName,
+            fileName: combinedFileName,
+            status: "error",
+            message: err instanceof Error ? err.message : "未知错误"
+          });
         }
-        await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
-        await fs.promises.copyFile(sourcePath, targetPath);
-        results.push({
-          fileName: file,
-          status: exists ? "overwritten" : "copied"
-        });
-      } catch (err) {
-        results.push({
-          fileName: file,
-          status: "error",
-          message: err instanceof Error ? err.message : "未知错误"
-        });
       }
     }
     return results;

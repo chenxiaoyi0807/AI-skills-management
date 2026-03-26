@@ -34,6 +34,7 @@ export default function Dashboard({ onOpenSettings, theme, onToggleTheme }: Prop
         showResultDialog,
         results,
         deployFullSkill,
+        deployMultipleSkills,
         resolveConflicts,
         closeConflictDialog,
         closeResultDialog
@@ -48,6 +49,9 @@ export default function Dashboard({ onOpenSettings, theme, onToggleTheme }: Prop
     // 云端同步状态
     const [isPushing, setIsPushing] = useState(false)
     const [isPulling, setIsPulling] = useState(false)
+
+    // 多选状态
+    const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set())
 
     const [activeTab, setActiveTab] = useState('全部')
 
@@ -94,6 +98,38 @@ export default function Dashboard({ onOpenSettings, theme, onToggleTheme }: Prop
         }
         return result
     }, [cards, searchQuery, getFilteredCards, activeTab])
+
+    const handleBulkDeploy = async () => {
+        if (selectedCards.size === 0) return
+        await deployMultipleSkills(Array.from(selectedCards))
+        setSelectedCards(new Set())
+    }
+
+    const handleSelectAll = () => {
+        if (selectedCards.size === filteredCards.length && filteredCards.length > 0) {
+            setSelectedCards(new Set())
+        } else {
+            setSelectedCards(new Set(filteredCards.map((c) => c.name)))
+        }
+    }
+
+    const skillSummaries = useMemo(() => {
+        const map = new Map<string, { name: string; total: number; success: number; error: number }>()
+        results.forEach((r) => {
+            const sName = r.skillName || '当前技能包'
+            if (!map.has(sName)) {
+                map.set(sName, { name: sName, total: 0, success: 0, error: 0 })
+            }
+            const stat = map.get(sName)!
+            stat.total++
+            if (r.status === 'error') {
+                stat.error++
+            } else {
+                stat.success++
+            }
+        })
+        return Array.from(map.values())
+    }, [results])
 
     /** 导入特定的新 Skill */
     const handleImportSkill = async (repoUrl: string, folderName: string) => {
@@ -256,8 +292,27 @@ export default function Dashboard({ onOpenSettings, theme, onToggleTheme }: Prop
 
                 {/* 统计 */}
                 <div className={styles.statsRow}>
-                    已发现 {cards.length} 个 Skill 分类
-                    {searchQuery && ` · 筛选出 ${filteredCards.length} 个结果`}
+                    <div>
+                        已发现 {cards.length} 个 Skill 分类
+                        {searchQuery && ` · 筛选出 ${filteredCards.length} 个结果`}
+                    </div>
+                    {filteredCards.length > 0 && (
+                        <div className={styles.bulkActions}>
+                            <label className={styles.selectAllLabel}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={selectedCards.size === filteredCards.length && filteredCards.length > 0} 
+                                    onChange={handleSelectAll} 
+                                />
+                                全选
+                            </label>
+                            {selectedCards.size > 0 && (
+                                <button className={styles.deployBulkBtn} onClick={handleBulkDeploy}>
+                                    批量部署 ({selectedCards.size})
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* 分类 Tabs */}
@@ -287,6 +342,13 @@ export default function Dashboard({ onOpenSettings, theme, onToggleTheme }: Prop
                                 onClick={() => openDetail(card)}
                                 onDeploy={() => deployFullSkill(card.name)}
                                 onTagsChange={(tags) => updateCardTags(card.name, tags)}
+                                isSelected={selectedCards.has(card.name)}
+                                onToggleSelect={(selected) => {
+                                    const newSet = new Set(selectedCards)
+                                    if (selected) newSet.add(card.name)
+                                    else newSet.delete(card.name)
+                                    setSelectedCards(newSet)
+                                }}
                             />
                         ))}
                     </div>
@@ -324,16 +386,15 @@ export default function Dashboard({ onOpenSettings, theme, onToggleTheme }: Prop
                             部署完成
                         </div>
                         <ul className={styles.resultList}>
-                            {results.map((r) => (
-                                <li key={r.fileName} className={styles.resultItem}>
-                                    <span className={styles[`status${r.status.charAt(0).toUpperCase() + r.status.slice(1)}` as keyof typeof styles] || ''}>
-                                        {r.status === 'copied' && '✅'}
-                                        {r.status === 'overwritten' && '🔄'}
-                                        {r.status === 'skipped' && '⏭️'}
-                                        {r.status === 'error' && '❌'}
+                            {skillSummaries.map((s) => (
+                                <li key={s.name} className={styles.resultItem}>
+                                    <span className={s.error > 0 ? styles.statusError : styles.statusCopied}>
+                                        {s.error > 0 ? '❌' : '✅'}
                                     </span>
-                                    <span>{r.fileName}</span>
-                                    {r.message && <span style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>({r.message})</span>}
+                                    <span style={{ fontWeight: 500 }}>{s.name} 部署完成</span>
+                                    <span style={{ color: 'var(--text-secondary)', fontSize: '13px', marginLeft: 'auto' }}>
+                                        ({s.total} 个文件{s.error > 0 && <span style={{color: 'var(--color-danger)'}}>, {s.error} 失败</span>})
+                                    </span>
                                 </li>
                             ))}
                         </ul>

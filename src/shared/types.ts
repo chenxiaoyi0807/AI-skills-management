@@ -57,6 +57,8 @@ export interface DeployRequest {
     files: string[]
     /** 目标目录绝对路径 */
     targetDir: string
+    /** 批量部署的多个技能包数据 */
+    skills?: { skillName: string; files: string[] }[]
 }
 
 /** 冲突项 */
@@ -71,6 +73,8 @@ export interface ConflictItem {
 
 /** 部署结果 */
 export interface DeployResult {
+    /** 所属技能名 */
+    skillName?: string
     /** 文件名 */
     fileName: string
     /** 状态 */

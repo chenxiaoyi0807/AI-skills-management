@@ -9,12 +9,14 @@ interface Props {
     onClick: () => void
     onDeploy: () => void
     onTagsChange: (tags: string[]) => void
+    isSelected?: boolean
+    onToggleSelect?: (selected: boolean) => void
 }
 
 /** 标签颜色循环列表 */
 const TAG_COLORS = ['purple', 'blue', 'cyan', 'orange', 'pink'] as const
 
-export default function SkillCard({ card, onClick, onDeploy, onTagsChange }: Props) {
+export default function SkillCard({ card, onClick, onDeploy, onTagsChange, isSelected, onToggleSelect }: Props) {
     const [isAddingTag, setIsAddingTag] = useState(false)
     const [newTag, setNewTag] = useState('')
 
@@ -92,6 +94,16 @@ export default function SkillCard({ card, onClick, onDeploy, onTagsChange }: Pro
             {/* 标题行 */}
             <div className={styles.header}>
                 <div className={styles.titleArea}>
+                    {onToggleSelect && (
+                        <input
+                            type="checkbox"
+                            checked={isSelected || false}
+                            onChange={(e) => onToggleSelect(e.target.checked)}
+                            onClick={(e) => e.stopPropagation()}
+                            className={styles.checkbox}
+                            title="选择以批量部署"
+                        />
+                    )}
                     <Folder size={20} className={styles.icon} />
                     <span className={styles.title} title={card.name}>{card.name}</span>
                     {card.syncUrl && (

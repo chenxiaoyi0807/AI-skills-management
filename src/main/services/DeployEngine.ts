@@ -14,24 +14,32 @@ export class DeployEngine {
      */
     async checkConflicts(req: DeployRequest): Promise<ConflictItem[]> {
         const config = await configManager.loadConfig()
-        const skillPath = join(config.rootDir, req.skillName)
-        const deployTargetBase = join(req.targetDir, req.skillName)
         const conflicts: ConflictItem[] = []
+        
+        const skillsToDeploy = req.skills && req.skills.length > 0 
+            ? req.skills 
+            : [{ skillName: req.skillName, files: req.files }]
 
-        for (const file of req.files) {
-            const sourcePath = join(skillPath, file)
-            const targetPath = join(deployTargetBase, file)
+        for (const skill of skillsToDeploy) {
+            const skillPath = join(config.rootDir, skill.skillName)
+            const deployTargetBase = join(req.targetDir, skill.skillName)
 
-            try {
-                await fs.access(targetPath)
-                // 文件存在，记录冲突
-                conflicts.push({
-                    fileName: file,
-                    sourcePath,
-                    targetPath
-                })
-            } catch {
-                // 文件不存在，无冲突
+            for (const file of skill.files) {
+                const sourcePath = join(skillPath, file)
+                const targetPath = join(deployTargetBase, file)
+                const combinedFileName = req.skills ? `${skill.skillName}/${file}` : file
+
+                try {
+                    await fs.access(targetPath)
+                    // 文件存在，记录冲突
+                    conflicts.push({
+                        fileName: combinedFileName,
+                        sourcePath,
+                        targetPath
+                    })
+                } catch {
+                    // 文件不存在，无冲突
+                }
             }
         }
 
@@ -49,49 +57,59 @@ export class DeployEngine {
         resolutions: Record<string, 'overwrite' | 'skip'> = {}
     ): Promise<DeployResult[]> {
         const config = await configManager.loadConfig()
-        const skillPath = join(config.rootDir, req.skillName)
-        const deployTargetBase = join(req.targetDir, req.skillName)
         const results: DeployResult[] = []
 
-        for (const file of req.files) {
-            const sourcePath = join(skillPath, file)
-            const targetPath = join(deployTargetBase, file)
+        const skillsToDeploy = req.skills && req.skills.length > 0 
+            ? req.skills 
+            : [{ skillName: req.skillName, files: req.files }]
 
-            try {
-                // 检查目标文件是否已存在
-                let exists = false
+        for (const skill of skillsToDeploy) {
+            const skillPath = join(config.rootDir, skill.skillName)
+            const deployTargetBase = join(req.targetDir, skill.skillName)
+
+            for (const file of skill.files) {
+                const sourcePath = join(skillPath, file)
+                const targetPath = join(deployTargetBase, file)
+                const combinedFileName = req.skills ? `${skill.skillName}/${file}` : file
+
                 try {
-                    await fs.access(targetPath)
-                    exists = true
-                } catch {
-                    // 不存在
-                }
-
-                if (exists) {
-                    const resolution = resolutions[file]
-                    if (resolution === 'skip') {
-                        results.push({ fileName: file, status: 'skipped', message: '用户选择跳过' })
-                        continue
+                    // 检查目标文件是否已存在
+                    let exists = false
+                    try {
+                        await fs.access(targetPath)
+                        exists = true
+                    } catch {
+                        // 不存在
                     }
-                    // overwrite 或未指定（默认覆盖）
+
+                    if (exists) {
+                        const resolution = resolutions[combinedFileName]
+                        if (resolution === 'skip') {
+                            results.push({ skillName: skill.skillName, fileName: combinedFileName, status: 'skipped', message: '用户选择跳过' })
+                            continue
+                        }
+                        // overwrite 或未指定（默认覆盖）
+                    }
+
+                    // 确保目标目录存在
+                    await fs.mkdir(dirname(targetPath), { recursive: true })
+
+                    // 执行复制
+                    await fs.copyFile(sourcePath, targetPath)
+
+                    results.push({
+                        skillName: skill.skillName,
+                        fileName: combinedFileName,
+                        status: exists ? 'overwritten' : 'copied'
+                    })
+                } catch (err) {
+                    results.push({
+                        skillName: skill.skillName,
+                        fileName: combinedFileName,
+                        status: 'error',
+                        message: err instanceof Error ? err.message : '未知错误'
+                    })
                 }
-
-                // 确保目标目录存在
-                await fs.mkdir(dirname(targetPath), { recursive: true })
-
-                // 执行复制
-                await fs.copyFile(sourcePath, targetPath)
-
-                results.push({
-                    fileName: file,
-                    status: exists ? 'overwritten' : 'copied'
-                })
-            } catch (err) {
-                results.push({
-                    fileName: file,
-                    status: 'error',
-                    message: err instanceof Error ? err.message : '未知错误'
-                })
             }
         }
 

@@ -129,9 +129,13 @@
 }
 
 .statsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: var(--text-secondary);
     font-size: var(--text-caption);
     margin-bottom: var(--space-md);
+    height: 32px;
 }
 
 .tabsRow {
@@ -230,6 +234,9 @@
 .resultList {
     list-style: none;
     margin-bottom: var(--space-lg);
+    max-height: 45vh;
+    overflow-y: auto;
+    padding-right: 8px; /* 给滚动条留点位置 */
 }
 
 .resultItem {
@@ -270,3 +277,73 @@
 .resultCloseBtn:hover {
     background: var(--color-primary-hover);
 }
+
+.bulkActions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.selectAllLabel {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: var(--text-body);
+}
+
+.selectAllLabel input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    border: 1px solid var(--text-tertiary, #888);
+    border-radius: 3px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.selectAllLabel input:hover {
+    border-color: var(--color-primary);
+}
+
+.selectAllLabel input:checked {
+    border-color: var(--color-primary);
+    background-color: transparent;
+}
+
+.selectAllLabel input:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--color-primary);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.deployBulkBtn {
+    background: var(--bg-card, transparent);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color, #444);
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.deployBulkBtn:hover {
+    background: var(--bg-hover, #333);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}

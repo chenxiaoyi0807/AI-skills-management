@@ -287,6 +287,7 @@ interface DeployState {
     pendingRequest: any | null
     startDeploy: (skillName: string, files: string[]) => Promise<void>
     deployFullSkill: (skillName: string) => Promise<void>
+    deployMultipleSkills: (skillNames: string[]) => Promise<void>
     resolveConflicts: (resolutions: Record<string, 'overwrite' | 'skip'>) => Promise<void>
     closeConflictDialog: () => void
     closeResultDialog: () => void
@@ -313,6 +314,58 @@ export const useDeployStore = create<DeployState>((set, get) => ({
         const files = collectAllFiles(nodes)
         if (files.length === 0) return
         await get().startDeploy(skillName, files)
+    },
+
+    deployMultipleSkills: async (skillNames: string[]) => {
+        if (skillNames.length === 0) return
+        const skillsData: { skillName: string; files: string[] }[] = []
+        
+        const collectAllFiles = (treeNodes: any[]): string[] => {
+            const files: string[] = []
+            treeNodes.forEach((n) => {
+                if (n.type === 'file') files.push(n.relativePath)
+                else if (n.type === 'directory' && n.children) files.push(...collectAllFiles(n.children))
+            })
+            return files
+        }
+
+        for (const name of skillNames) {
+            const nodes = await window.api.getFileTree(name)
+            const files = collectAllFiles(nodes)
+            if (files.length > 0) {
+                skillsData.push({ skillName: name, files })
+            }
+        }
+        if (skillsData.length === 0) return
+
+        const folderResult = await window.api.selectFolder()
+        if (folderResult.canceled) return
+
+        const req = {
+            skillName: skillsData[0].skillName, // 作为一个兼容字段传给后端，主要以 skills 字段为准
+            files: skillsData[0].files,
+            skills: skillsData,
+            targetDir: folderResult.path
+        }
+
+        set({ isDeploying: true })
+        const checkResult = await window.api.checkConflicts(req)
+
+        if (checkResult.conflicts && checkResult.conflicts.length > 0) {
+            set({
+                conflicts: checkResult.conflicts,
+                showConflictDialog: true,
+                pendingRequest: req,
+                isDeploying: false
+            })
+        } else {
+            const deployResult = await window.api.executeDeploy(req, {})
+            set({
+                results: deployResult.results || [],
+                showResultDialog: true,
+                isDeploying: false
+            })
+        }
     },
 
     startDeploy: async (skillName: string, files: string[]) => {
